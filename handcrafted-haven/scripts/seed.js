@@ -119,8 +119,8 @@ async function seedProducts(client) {
         title VARCHAR(255) NOT NULL,
         price DECIMAL(10, 2) NOT NULL,
         description TEXT NOT NULL,
-        imageUrl VARCHAR(255) NOT NULL,
-        artisanId VARCHAR(255) NOT NULL,
+        imageurl VARCHAR(255) NOT NULL,
+        artisanid VARCHAR(255) NOT NULL,
         category VARCHAR(255) NOT NULL
       );
     `;
@@ -130,7 +130,7 @@ async function seedProducts(client) {
     const insertedProducts = await Promise.all(
       products.map(async (product) => {
         return client.sql`
-        INSERT INTO products (id, title, price, description, "imageUrl", "artisanId", category)
+        INSERT INTO products (id, title, price, description, imageurl, artisanid, category)
         VALUES (${product.id}, ${product.title}, ${product.price}, ${product.description}, ${product.imageUrl}, ${product.artisanId}, ${product.category})
         ON CONFLICT (id) DO NOTHING;
       `;
