@@ -1,5 +1,7 @@
 import { getProductById, getArtisanById } from '@/data/mockDb';
 import Link from 'next/link';
+import Header from '@/components/Header';
+import AddToCartButton from '@/components/AddToCartButton';
 
 // Next.js convention for dynamic routes
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -19,19 +21,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   return (
     <>
-      <header className="header internal-header">
-        <div className="container header-content">
-          <div className="logo">
-            <Link href="/">Handcrafted Haven</Link>
-          </div>
-          <nav className="nav-links">
-            <Link href="/shop" className="active">Shop</Link>
-            <Link href="#">Artisans</Link>
-            <Link href="#">Our Story</Link>
-            <Link href="#">Cart (0)</Link>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="product-detail-main container">
         <Link href="/shop" className="back-link">&larr; Back to Shop</Link>
@@ -41,13 +31,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           </div>
           <div className="product-info-container">
             <h1 className="product-title">{product.title}</h1>
-            <p className="product-artisan">Crafted by {artisan?.name} from {artisan?.location}</p>
+            <p className="product-artisan">
+              Crafted by <Link href={`/artisans/${product.artisanId}`} aria-label={`View ${artisan?.name} profile`} style={{ textDecoration: 'underline' }}>{artisan?.name}</Link> from {artisan?.location}
+            </p>
             <p className="product-price">${product.price.toFixed(2)}</p>
             
             <p className="product-description">{product.description}</p>
             
             <div className="product-actions">
-              <button className="btn btn-primary add-to-cart-btn">Add to Cart</button>
+              <AddToCartButton product={product} />
             </div>
           </div>
         </div>

@@ -1,21 +1,7 @@
-export type Artisan = {
-  id: string;
-  name: string;
-  location: string;
-  bio: string;
-};
+const { db } = require('@vercel/postgres');
+require('dotenv').config({ path: '.env.local' });
 
-export type Product = {
-  id: string;
-  title: string;
-  price: number;
-  description: string;
-  imageUrl: string;
-  artisanId: string;
-  category: string;
-};
-
-export const artisans: Artisan[] = [
+const artisans = [
   {
     id: 'a1',
     name: 'Earth & Fire Studios',
@@ -36,7 +22,7 @@ export const artisans: Artisan[] = [
   }
 ];
 
-export const products: Product[] = [
+const products = [
   {
     id: 'p1',
     title: 'Hand-thrown Ceramic Mug',
@@ -93,14 +79,81 @@ export const products: Product[] = [
   }
 ];
 
-export function getProductById(id: string): Product | undefined {
-  return products.find(p => p.id === id);
+async function seedArtisans(client) {
+  try {
+    await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+    const createTable = await client.sql`
+      CREATE TABLE IF NOT EXISTS artisans (
+        id VARCHAR(255) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        location VARCHAR(255) NOT NULL,
+        bio TEXT NOT NULL
+      );
+    `;
+
+    console.log(`Created "artisans" table`);
+
+    const insertedArtisans = await Promise.all(
+      artisans.map(async (artisan) => {
+        return client.sql`
+        INSERT INTO artisans (id, name, location, bio)
+        VALUES (${artisan.id}, ${artisan.name}, ${artisan.location}, ${artisan.bio})
+        ON CONFLICT (id) DO NOTHING;
+      `;
+      }),
+    );
+
+    console.log(`Seeded ${insertedArtisans.length} artisans`);
+    return { createTable, artisans: insertedArtisans };
+  } catch (error) {
+    console.error('Error seeding artisans:', error);
+    throw error;
+  }
 }
 
-export function getArtisanById(id: string): Artisan | undefined {
-  return artisans.find(a => a.id === id);
+async function seedProducts(client) {
+  try {
+    const createTable = await client.sql`
+      CREATE TABLE IF NOT EXISTS products (
+        id VARCHAR(255) PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        price DECIMAL(10, 2) NOT NULL,
+        description TEXT NOT NULL,
+        imageUrl VARCHAR(255) NOT NULL,
+        artisanId VARCHAR(255) NOT NULL,
+        category VARCHAR(255) NOT NULL
+      );
+    `;
+
+    console.log(`Created "products" table`);
+
+    const insertedProducts = await Promise.all(
+      products.map(async (product) => {
+        return client.sql`
+        INSERT INTO products (id, title, price, description, "imageUrl", "artisanId", category)
+        VALUES (${product.id}, ${product.title}, ${product.price}, ${product.description}, ${product.imageUrl}, ${product.artisanId}, ${product.category})
+        ON CONFLICT (id) DO NOTHING;
+      `;
+      }),
+    );
+
+    console.log(`Seeded ${insertedProducts.length} products`);
+    return { createTable, products: insertedProducts };
+  } catch (error) {
+    console.error('Error seeding products:', error);
+    throw error;
+  }
 }
 
-export function getProductsByArtisanId(artisanId: string): Product[] {
-  return products.filter(p => p.artisanId === artisanId);
+async function main() {
+  const client = await db.connect();
+
+  await seedArtisans(client);
+  await seedProducts(client);
+
+  await client.end();
 }
+
+main().catch((err) => {
+  console.error('An error occurred while attempting to seed the database:', err);
+});

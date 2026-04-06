@@ -1,22 +1,11 @@
 import { products, getArtisanById } from '@/data/mockDb';
 import Link from 'next/link';
+import Header from '@/components/Header';
 
 export default function ShopPage() {
   return (
     <>
-      <header className="header internal-header">
-        <div className="container header-content">
-          <div className="logo">
-            <Link href="/">Handcrafted Haven</Link>
-          </div>
-          <nav className="nav-links">
-            <Link href="/shop" className="active">Shop</Link>
-            <Link href="#">Artisans</Link>
-            <Link href="#">Our Story</Link>
-            <Link href="#">Cart (0)</Link>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       <main className="shop-main container">
         <h1 className="page-title">Shop Collection</h1>
