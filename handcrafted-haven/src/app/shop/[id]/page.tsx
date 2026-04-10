@@ -1,4 +1,4 @@
-import { getProductById, getArtisanById } from '@/data/mockDb';
+import { getProductById, getArtisanById } from '@/data/db';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import AddToCartButton from '@/components/AddToCartButton';
@@ -6,7 +6,7 @@ import AddToCartButton from '@/components/AddToCartButton';
 // Next.js convention for dynamic routes
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
-  const product = getProductById(resolvedParams.id);
+  const product = await getProductById(resolvedParams.id);
 
   if (!product) {
     return (
@@ -17,7 +17,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     );
   }
 
-  const artisan = getArtisanById(product.artisanId);
+  const artisanId = product.artisanId || product.artisanid || '';
+  const artisan = await getArtisanById(artisanId);
 
   return (
     <>
@@ -39,7 +40,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <p className="product-description">{product.description}</p>
             
             <div className="product-actions">
-              <AddToCartButton product={product} />
+              <AddToCartButton product={product as any} />
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Product } from '@/data/mockDb';
+import { Product } from '@/data/db';
 import { useCart } from '@/context/CartContext';
 
 export default function AddToCartButton({ product }: { product: Product }) {

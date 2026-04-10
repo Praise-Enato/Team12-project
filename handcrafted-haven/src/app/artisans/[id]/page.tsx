@@ -1,11 +1,11 @@
-import { getArtisanById, getProductsByArtisanId } from '@/data/mockDb';
+import { getArtisanById, getProductsByArtisan } from '@/data/db';
 import Link from 'next/link';
 import Header from '@/components/Header';
 
 // Next.js convention for dynamic routes
 export default async function ArtisanProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
-  const artisan = getArtisanById(resolvedParams.id);
+  const artisan = await getArtisanById(resolvedParams.id);
 
   if (!artisan) {
     return (
@@ -19,7 +19,7 @@ export default async function ArtisanProfilePage({ params }: { params: Promise<{
     );
   }
 
-  const artisanProducts = getProductsByArtisanId(artisan.id);
+  const artisanProducts = await getProductsByArtisan(artisan.id);
 
   return (
     <>

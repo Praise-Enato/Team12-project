@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Product } from '@/data/mockDb';
+import { Product } from '@/data/db';
 
 export type CartItem = {
   product: Product;
@@ -16,12 +16,15 @@ type CartContextType = {
   clearCart: () => void;
   cartTotal: number;
   itemCount: number;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const addToCart = (product: Product, quantity: number = 1) => {
     setItems((prev) => {
@@ -35,6 +38,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, { product, quantity }];
     });
+    setIsSidebarOpen(true);
   };
 
   const removeFromCart = (productId: string) => {
@@ -70,6 +74,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         cartTotal,
         itemCount,
+        isSidebarOpen,
+        setIsSidebarOpen
       }}
     >
       {children}
