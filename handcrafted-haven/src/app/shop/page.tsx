@@ -2,6 +2,8 @@ import { getProducts, getArtisanById } from '@/data/db';
 import Link from 'next/link';
 import Header from '@/components/Header';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ShopPage() {
   const products = await getProducts();
 

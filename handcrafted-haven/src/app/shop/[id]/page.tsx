@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import AddToCartButton from '@/components/AddToCartButton';
 
+export const dynamic = 'force-dynamic';
+
 // Next.js convention for dynamic routes
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;

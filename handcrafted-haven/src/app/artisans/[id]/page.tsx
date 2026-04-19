@@ -2,6 +2,8 @@ import { getArtisanById, getProductsByArtisan } from '@/data/db';
 import Link from 'next/link';
 import Header from '@/components/Header';
 
+export const dynamic = 'force-dynamic';
+
 // Next.js convention for dynamic routes
 export default async function ArtisanProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
