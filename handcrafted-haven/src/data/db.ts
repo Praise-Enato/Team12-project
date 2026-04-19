@@ -73,3 +73,44 @@ export async function getProductsByArtisan(artisanId: string): Promise<Product[]
     return [];
   }
 }
+
+export type Review = {
+  id: number;
+  product_id: string;
+  rating: number;
+  comment: string;
+  user_name: string;
+  created_at: string;
+};
+
+export async function getReviewsByProduct(productId: string): Promise<Review[]> {
+  try {
+    const { rows } = await sql<Review>`SELECT * FROM reviews WHERE product_id = ${productId} ORDER BY created_at DESC`;
+    return rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    return [];
+  }
+}
+
+export async function addReview(productId: string, rating: number, comment: string, userName: string) {
+  try {
+    await sql`
+      INSERT INTO reviews (product_id, rating, comment, user_name)
+      VALUES (${productId}, ${rating}, ${comment}, ${userName})
+    `;
+  } catch (error) {
+    console.error('Database Error:', error);
+  }
+}
+
+export async function getArtisanForAuth(id: string) {
+  try {
+    const { rows } = await sql`SELECT id, name, password_hash FROM artisans WHERE id = ${id}`;
+    if (rows.length === 0) return null;
+    return rows[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    return null;
+  }
+}
